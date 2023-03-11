@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\CompanyRepository;
@@ -24,7 +26,7 @@ class Company
     private ?string $marketCategory = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
-    private ?string $roundLotSize = null;
+    private ?float $roundLotSize = null;
 
     #[ORM\Column(length: 255)]
     private ?string $securityName = null;
@@ -81,7 +83,7 @@ class Company
         return $this->roundLotSize;
     }
 
-    public function setRoundLotSize(string $roundLotSize): self
+    public function setRoundLotSize(float $roundLotSize): self
     {
         $this->roundLotSize = $roundLotSize;
 
