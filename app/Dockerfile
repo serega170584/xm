@@ -22,6 +22,4 @@ RUN git clone https://github.com/php-amqp/php-amqp /usr/src/php/ext/amqp
 RUN docker-php-ext-install amqp
 RUN docker-php-source delete
 
-RUN apk add supervisor
-
 RUN addgroup -g 1000 app && adduser -u 1000 -G app -s /bin/sh -D app
