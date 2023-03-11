@@ -14,7 +14,7 @@
         <div>
             <label>Symbol</label>
         </div>
-        <div class="ui-widget">
+        <div>
             <input name="symbol" id="symbol" value="" required>
         </div>
         <div>
@@ -33,7 +33,10 @@
             <label>Email</label>
         </div>
         <div>
-            <input name="email" value="" required>
+            <input name="email" value="" type="email" required>
+        </div>
+        <div>
+            <input name="submit" value="Send" type="submit" required>
         </div>
         <input type="hidden" name="token" value="{{ csrf_token('company-order') }}"/>
     </form>
