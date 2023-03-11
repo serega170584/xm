@@ -28,6 +28,9 @@ class CompanyOrder
     #[ORM\Column]
     private ?int $companyId = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $symbol = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,6 +80,18 @@ class CompanyOrder
     public function setCompanyId(int $companyId): self
     {
         $this->companyId = $companyId;
+
+        return $this;
+    }
+
+    public function getSymbol(): ?string
+    {
+        return $this->symbol;
+    }
+
+    public function setSymbol(string $symbol): self
+    {
+        $this->symbol = $symbol;
 
         return $this;
     }
