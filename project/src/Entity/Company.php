@@ -78,7 +78,7 @@ class Company
         return $this;
     }
 
-    public function getRoundLotSize(): ?string
+    public function getRoundLotSize(): ?float
     {
         return $this->roundLotSize;
     }
