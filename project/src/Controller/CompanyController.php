@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,8 +13,6 @@ class CompanyController extends AbstractController
     #[Route('/company', name: 'app_company')]
     public function index(): Response
     {
-        return $this->render('company/index.html.twig', [
-            'controller_name' => 'CompanyController',
-        ]);
+        return $this->render('company/index.html.twig');
     }
 }

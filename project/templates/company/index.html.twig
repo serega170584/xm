@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CompanyController!{% endblock %}
+{% block title %}Company Order{% endblock %}
 
 {% block body %}
 <style>
@@ -9,12 +9,33 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/app/src/Controller/CompanyController.php'|file_link(0) }}">src/Controller/CompanyController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/app/templates/company/index.html.twig'|file_link(0) }}">templates/company/index.html.twig</a></code></li>
-    </ul>
+    <h1>Company Order</h1>
+    <form method="post">
+        <div>
+            <label>Symbol</label>
+        </div>
+        <div>
+            <input name="symbol" value="" required>
+        </div>
+        <div>
+            <label>Start date</label>
+        </div>
+        <div>
+            <input name="start_date" id="start_date" value="" required>
+        </div>
+        <div>
+            <label>End date</label>
+        </div>
+        <div>
+            <input name="end_date" id="end_date" value="" required>
+        </div>
+        <div>
+            <label>Email</label>
+        </div>
+        <div>
+            <input name="email" value="" required>
+        </div>
+        <input type="hidden" name="token" value="{{ csrf_token('company-order') }}"/>
+    </form>
 </div>
 {% endblock %}

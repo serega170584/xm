@@ -22,6 +22,7 @@
     "dependencies": {
         "jquery": "^3.6.4",
         "jquery-autocomplete": "^1.2.8",
-        "jquery-datepicker": "^1.12.3"
+        "jquery-datepicker": "^1.12.3",
+        "webpack-jquery-ui": "^2.0.1"
     }
 }

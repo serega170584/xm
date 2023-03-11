@@ -10,3 +10,7 @@ import './styles/app.css';
 
 // start the Stimulus application
 import './bootstrap';
+
+import "webpack-jquery-ui"
+
+import './date_picker';
