@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
+use App\Entity\Company;
 use App\Entity\CompanyHistory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -76,5 +80,18 @@ class CompanyHistoryRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getResult();
 
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findLastOne(): ?CompanyHistory
+    {
+        return $this->createQueryBuilder('c')
+                    ->orderBy('c.id', 'DESC')
+                    ->getQuery()
+                    ->setMaxResults(1)
+                    ->getOneOrNullResult()
+            ;
     }
 }

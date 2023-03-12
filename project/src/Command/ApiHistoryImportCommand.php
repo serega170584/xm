@@ -7,6 +7,8 @@ namespace App\Command;
 use App\Entity\Company;
 use App\Entity\CompanyHistory;
 use App\Repository\CompanyRepository;
+use App\Service\CompanyHistoryApiImporter;
+use App\Service\CompanyHistoryApiProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Monolog\DateTimeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,21 +32,18 @@ class ApiHistoryImportCommand extends Command
 {
     private const DEFAULT_URL = 'https://yh-finance.p.rapidapi.com/stock/v3/get-historical-data';
 
-    private HttpClientInterface $httpClient;
-
     private EntityManagerInterface $em;
 
     private CompanyRepository $companyRepository;
 
-    private string $token;
+    private CompanyHistoryApiImporter $companyHistoryApiImporter;
 
-    public function __construct(HttpClientInterface $httpClient, EntityManagerInterface $em, CompanyRepository $companyRepository, string $token, string $name = null)
+    public function __construct(CompanyHistoryApiImporter $companyHistoryApiImporter, EntityManagerInterface $em, CompanyRepository $companyRepository, string $name = null)
     {
         parent::__construct($name);
-        $this->httpClient = $httpClient;
+        $this->companyHistoryApiImporter = $companyHistoryApiImporter;
         $this->em = $em;
         $this->companyRepository = $companyRepository;
-        $this->token = $token;
     }
 
     protected function configure(): void
@@ -88,55 +87,8 @@ class ApiHistoryImportCommand extends Command
             $url = $baseImportUrl . '?symbol=' . $symbol;
 
             try {
-                $response = $this->httpClient->request('GET', $url, [
-                    'headers' => [
-                        'X-RapidAPI-Key' => $this->token,
-                        'X-RapidAPI-Host' => 'yh-finance.p.rapidapi.com'
-                    ]
-                ]);
-
-                $code = $response->getStatusCode();
-                $headers = $response->getHeaders();
-                $contentType = $headers['content-type'][0] ?? NULL;
-
-                if (200 !== $code) {
-                    throw new \Exception('Wrong code status');
-                }
-
-                if ('application/json' !== $contentType) {
-                    throw new \Exception('Wrong content type');
-                }
-
-                $prices = $response->toArray();
-                $prices = $prices['prices'] ?? [];
-                foreach ($prices as $price) {
-                    $date = new \DateTime();
-                    $date->setTimestamp($price['date']);
-                    $date = DateTimeImmutable::createFromFormat('Y-m-d', $date->format('Y-m-d'));
-                    $open = $price['open'] ?? 0;
-                    $open = (int) ($open * 100);
-                    $high = $price['high'] ?? 0;
-                    $high = (int) ($high * 100);
-                    $low = $price['low'] ?? 0;
-                    $low = (int) ($low * 100);
-                    $close = $price['close'] ?? 0;
-                    $close = (int) ($close * 100);
-                    $volume = $price['volume'] ?? 0;
-                    $adjclose = $price['adjclose'] ?? 0;
-                    $adjclose = (int) ($adjclose * 100);
-
-                    $history = new CompanyHistory();
-                    $history->setDate($date);
-                    $history->setOpen($open);
-                    $history->setHigh($high);
-                    $history->setLow($low);
-                    $history->setClose($close);
-                    $history->setVolume($volume);
-                    $history->setAdjclose($adjclose);
-                    $history->setSymbol($symbol);
-                    $this->em->persist($history);
-                }
-                $this->em->flush();
+                $this->companyHistoryApiImporter->setCompany($company);
+                $this->companyHistoryApiImporter->import($url);
             } catch (\Exception $e) {
                 $io->note(sprintf('Exception: %s', $e->getMessage()));
                 continue;

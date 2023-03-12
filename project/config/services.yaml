@@ -21,7 +21,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    App\Command\ApiHistoryImportCommand:
+    App\Service\CompanyHistoryApiProvider:
         $token: '%env(HISTORY_TOKEN)%'
 
     # add more service definitions when explicit configuration is needed

@@ -4,7 +4,6 @@ namespace App\Tests;
 
 use App\Entity\Company;
 use App\Repository\CompanyRepository;
-use App\Service\CompanyApiProvider;
 use App\Service\CompanyFieldsValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -53,6 +52,6 @@ class CompanyFieldsTest extends KernelTestCase
         yield ['AGU', '2023-03-06', '', 'test@test.ru', true];
         yield ['AGU', '', '2023-03-07', 'test@test.ru', true];
         yield ['', '2023-03-06', '2023-03-07', 'test@test.ru', true];
-//        yield ['AGU', '2023-03-06', '2023-03-07', 'test@test.ru', true];
+        yield ['AGU', '2023-03-06', '-03-07', 'test@test.ru', true];
     }
 }
