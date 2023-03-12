@@ -8,6 +8,7 @@ use App\Entity\Company;
 use App\Entity\CompanyHistory;
 use App\Repository\CompanyRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Monolog\DateTimeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -106,8 +107,9 @@ class ApiHistoryImportCommand extends Command
                 $prices = $response->toArray();
                 $prices = $prices['prices'] ?? [];
                 foreach ($prices as $price) {
-                    $date = new \DateTimeImmutable();
+                    $date = new \DateTime();
                     $date->setTimestamp($price['date']);
+                    $date = DateTimeImmutable::createFromFormat('Y-m-d', $date->format('Y-m-d'));
                     $open = $price['open'] ?? 0;
                     $open = (int) ($open * 100);
                     $high = $price['high'] ?? 0;

@@ -63,4 +63,18 @@ class CompanyHistoryRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findAllBySymbolDates(string $symbol, string $startDate, string $endDate): array
+    {
+        return $this->createQueryBuilder('c')
+                    ->andWhere('c.symbol = :val')
+                    ->andWhere('c.date > :startDate')
+                    ->andWhere('c.date < :endDate')
+                    ->setParameter('val', $symbol)
+                    ->setParameter('startDate', $startDate)
+                    ->setParameter('endDate', $endDate)
+                    ->getQuery()
+                    ->getResult();
+
+    }
 }
