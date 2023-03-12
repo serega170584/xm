@@ -4,15 +4,90 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Repository\CompanyRepository;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CompanyController extends AbstractController
 {
     #[Route('/company', name: 'app_company')]
-    public function index(): Response
+    public function index(Request $request, CompanyRepository $repository): Response
     {
-        return $this->render('company/index.html.twig');
+        $errorMessages = [];
+
+        $values = [
+            'symbol' => '',
+            'start_date' => '',
+            'end_date' => '',
+            'email' => '',
+        ];
+
+        $token = $request->get('token');
+        if ($request->get('submit') === 'Send' && $this->isCsrfTokenValid('company-order', $token)) {
+
+            $constraint = new Assert\Collection([
+                'symbol' => new Assert\NotBlank(),
+                'start_date' => [
+                    new Assert\NotBlank(),
+                    new Assert\Date()
+                ],
+                'end_date' => [
+                    new Assert\NotBlank(),
+                    new Assert\Date()
+                ],
+                'email' => [
+                    new Assert\NotBlank(),
+                    new Assert\Email(),
+                ]
+            ]);
+
+            $values = [
+                'symbol' => $request->get('symbol'),
+                'start_date' => $request->get('start_date'),
+                'end_date' => $request->get('end_date'),
+                'email' => $request->get('email'),
+            ];
+
+            $validator = Validation::createValidator();
+            $errors = $validator->validate($values, $constraint);
+
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+
+            if ([] === $errorMessages) {
+                $startDate = DateTimeImmutable::createFromFormat('Y-m-d', $request->get('start_date'));
+                $endDate = DateTimeImmutable::createFromFormat('Y-m-d', $request->get('end_date'));
+                $currentDate = new \DateTimeImmutable();
+
+                if ($startDate > $endDate || $endDate > $currentDate) {
+                    $errorMessages[] = 'Wrong dates';
+                }
+            }
+
+            if ([] === $errorMessages) {
+                $company = $repository->findOneBySymbol($request->get('symbol'));
+
+                if (NULL === $company) {
+                    $errorMessages[] = 'Wrong symbol';
+                }
+            }
+
+            if ([] === $errorMessages) {
+                return $this->redirect('history');
+            }
+        }
+        return $this->render('company/index.html.twig', ['errors_text' => implode(' ', $errorMessages)] + $values);
+    }
+
+    #[Route('/history', name: 'app_history')]
+    public function history(): Response
+    {
+        return $this->render('company/history.html.twig');
     }
 }

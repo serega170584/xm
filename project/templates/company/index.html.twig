@@ -10,33 +10,36 @@
 
 <div class="example-wrapper">
     <h1>Company Order</h1>
+    <div class="errors">
+        {{ errors_text }}
+    </div>
     <form method="post">
         <div>
             <label>Symbol</label>
         </div>
         <div>
-            <input name="symbol" id="symbol" value="" required>
+            <input name="symbol" id="symbol" value="{{ symbol }}">
         </div>
         <div>
             <label>Start date</label>
         </div>
         <div>
-            <input name="start_date" id="start_date" value="" required>
+            <input name="start_date" id="start_date" value="{{ start_date }}">
         </div>
         <div>
             <label>End date</label>
         </div>
         <div>
-            <input name="end_date" id="end_date" value="" required>
+            <input name="end_date" id="end_date" value="{{ end_date }}">
         </div>
         <div>
             <label>Email</label>
         </div>
         <div>
-            <input name="email" value="" type="email" required>
+            <input name="email" value="{{ email }}" type="text">
         </div>
         <div>
-            <input name="submit" value="Send" type="submit" required>
+            <input name="submit" value="Send" type="submit">
         </div>
         <input type="hidden" name="token" value="{{ csrf_token('company-order') }}"/>
     </form>
