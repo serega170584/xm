@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Company;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -79,6 +82,19 @@ class CompanyRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
                     ->getQuery()
                     ->toIterable()
+            ;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findLastOne(): ?Company
+    {
+        return $this->createQueryBuilder('c')
+                    ->orderBy('c.id', 'DESC')
+                    ->getQuery()
+                    ->setMaxResults(1)
+                    ->getOneOrNullResult()
             ;
     }
 }
