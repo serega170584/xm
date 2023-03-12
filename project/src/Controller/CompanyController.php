@@ -11,14 +11,20 @@ use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CompanyController extends AbstractController
 {
+    /**
+     * @throws TransportExceptionInterface
+     */
     #[Route('/company', name: 'app_company')]
-    public function index(Request $request, CompanyRepository $repository): Response
+    public function index(Request $request, CompanyRepository $repository, MailerInterface $mailer): Response
     {
         $errorMessages = [];
 
@@ -81,6 +87,15 @@ class CompanyController extends AbstractController
             }
 
             if ([] === $errorMessages) {
+                $email = (new Email())
+                    ->from('serega170584@gmail.com')
+                    ->to('serega170584@gmail.com')
+                    ->subject('123')
+                    ->text('8888')
+                    ->html('asdasd');
+
+                $mailer->send($email);
+
                 return $this->redirect('history?symbol=' . $request->get('symbol') . '&start_date=' . $request->get('start_date') . '&end_date=' . $request->get('end_date'));
             }
         }
