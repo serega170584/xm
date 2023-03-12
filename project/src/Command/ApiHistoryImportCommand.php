@@ -36,12 +36,15 @@ class ApiHistoryImportCommand extends Command
 
     private CompanyRepository $companyRepository;
 
-    public function __construct(HttpClientInterface $httpClient, EntityManagerInterface $em, CompanyRepository $companyRepository, string $name = null)
+    private string $token;
+
+    public function __construct(HttpClientInterface $httpClient, EntityManagerInterface $em, CompanyRepository $companyRepository, string $token, string $name = null)
     {
         parent::__construct($name);
         $this->httpClient = $httpClient;
         $this->em = $em;
         $this->companyRepository = $companyRepository;
+        $this->token = $token;
     }
 
     protected function configure(): void
@@ -87,7 +90,7 @@ class ApiHistoryImportCommand extends Command
             try {
                 $response = $this->httpClient->request('GET', $url, [
                     'headers' => [
-                        'X-RapidAPI-Key' => '288c19ff5dmsh1077b0b57d92e35p132743jsn307277fc5fa6',
+                        'X-RapidAPI-Key' => $this->token,
                         'X-RapidAPI-Host' => 'yh-finance.p.rapidapi.com'
                     ]
                 ]);
