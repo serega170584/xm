@@ -8,6 +8,7 @@ use App\Entity\CompanyHistory;
 use App\Repository\CompanyHistoryRepository;
 use App\Repository\CompanyRepository;
 use App\Service\CompanyFieldsValidator;
+use App\Service\CompanyHistoryReport;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,30 +60,13 @@ class CompanyController extends AbstractController
     #[Route('/history', name: 'app_history')]
     public function history(Request $request, CompanyHistoryRepository $repository): Response
     {
-        $history = $repository->findAllBySymbolDates($request->get('symbol'), $request->get('start_date'), $request->get('end_date'));
-
-        $labels = [];
-        $openData = [];
-        $closeData = [];
-        /**
-         * @var CompanyHistory $item
-         */
-        foreach ($history as $item) {
-            $date = $item->getDate()->format('Y-m-d');
-            $labels[] = $date;
-            $openItem['x'] = $date;
-            $openItem['y'] = $item->getOpen();
-            $openData[] = $openItem;
-            $closeItem['x'] = $date;
-            $closeItem['y'] = $item->getClose();
-            $closeData[] = $closeItem;
-        }
-
+        $companyHistoryReport = new CompanyHistoryReport();
+        $companyHistoryReport->generate($request, $repository);
         return $this->render('company/history.html.twig', [
-            'history' => $history,
-            'labels' => json_encode($labels),
-            'open_data' => json_encode($openData),
-            'close_data' => json_encode($closeData),
+            'history' => $companyHistoryReport->getHistory(),
+            'labels' => json_encode($companyHistoryReport->getLabels()),
+            'open_data' => json_encode($companyHistoryReport->getOpenData()),
+            'close_data' => json_encode($companyHistoryReport->getCloseData()),
         ]);
     }
 }
