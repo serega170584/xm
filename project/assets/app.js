@@ -14,3 +14,5 @@ import './bootstrap';
 import "webpack-jquery-ui"
 
 import './date_picker';
+
+import './company_form_validation';
