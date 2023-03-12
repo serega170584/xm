@@ -21,7 +21,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
     name: 'app:api:company:import',
-    description: 'Add a short description for your command',
+    description: 'Companies import',
 )]
 class ApiCompanyImportCommand extends Command
 {

@@ -64,7 +64,7 @@ class CompanyRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-    public function findOneBySymbol($value): ?Company
+    public function findOneBySymbol(string $value): ?Company
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.symbol = :val')
@@ -72,5 +72,13 @@ class CompanyRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    public function findAllRows(): \Iterator
+    {
+        return $this->createQueryBuilder('c')
+                    ->getQuery()
+                    ->toIterable()
+            ;
     }
 }
