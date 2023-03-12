@@ -68,39 +68,44 @@ class ApiCompanyImportCommand extends Command
 
         $importUrl = NULL === $importUrl ? self::DEFAULT_URL : $importUrl;
 
-        $response = $this->httpClient->request('GET', $importUrl);
-        $code = $response->getStatusCode();
-        $headers = $response->getHeaders();
-        $contentType = $headers['content-type'][0] ?? NULL;
+        try {
+            $response = $this->httpClient->request('GET', $importUrl);
+            $code = $response->getStatusCode();
+            $headers = $response->getHeaders();
+            $contentType = $headers['content-type'][0] ?? NULL;
 
-        if (200 !== $code) {
-            throw new \Exception('Wrong code status');
+            if (200 !== $code) {
+                throw new \Exception('Wrong code status');
+            }
+
+            if ('text/plain' !== $contentType) {
+                throw new \Exception('Wrong content type');
+            }
+
+            $emptyRsm = new \Doctrine\ORM\Query\ResultSetMapping();
+            $sql = 'TRUNCATE TABLE company';
+            $query = $this->em->createNativeQuery($sql, $emptyRsm);
+            $query->execute();
+
+            $apiCompanies = $response->toArray();
+
+            foreach ($apiCompanies as $apiCompany) {
+                $company = new Company();
+                $company->setCompanyName($apiCompany['Company Name']);
+                $company->setFinancialStatus($apiCompany['Financial Status']);
+                $company->setMarketCategory($apiCompany['Market Category']);
+                $company->setRoundLotSize($apiCompany['Round Lot Size']);
+                $company->setSecurityName($apiCompany['Security Name']);
+                $company->setSymbol($apiCompany['Symbol']);
+                $company->setTestIssue($apiCompany['Test Issue']);
+                $this->em->persist($company);
+            }
+
+            $this->em->flush();
+
+        } catch (\Exception $e) {
+            $io->note(sprintf('Exception: %s', $e->getMessage()));
         }
-
-        if ('text/plain' !== $contentType) {
-            throw new \Exception('Wrong content type');
-        }
-
-        $emptyRsm = new \Doctrine\ORM\Query\ResultSetMapping();
-        $sql = 'TRUNCATE TABLE company';
-        $query = $this->em->createNativeQuery($sql, $emptyRsm);
-        $query->execute();
-
-        $apiCompanies = $response->toArray();
-
-        foreach ($apiCompanies as $apiCompany) {
-            $company = new Company();
-            $company->setCompanyName($apiCompany['Company Name']);
-            $company->setFinancialStatus($apiCompany['Financial Status']);
-            $company->setMarketCategory($apiCompany['Market Category']);
-            $company->setRoundLotSize($apiCompany['Round Lot Size']);
-            $company->setSecurityName($apiCompany['Security Name']);
-            $company->setSymbol($apiCompany['Symbol']);
-            $company->setTestIssue($apiCompany['Test Issue']);
-            $this->em->persist($company);
-        }
-
-        $this->em->flush();
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
 
