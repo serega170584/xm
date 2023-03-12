@@ -88,11 +88,10 @@ class CompanyController extends AbstractController
 
             if ([] === $errorMessages) {
                 $email = (new Email())
-                    ->from('serega170584@gmail.com')
-                    ->to('serega170584@gmail.com')
-                    ->subject('123')
-                    ->text('8888')
-                    ->html('asdasd');
+                    ->from($this->getParameter('from_email'))
+                    ->to($request->get('email'))
+                    ->subject($company->getCompanyName())
+                    ->text('From ' . $request->get('start_date') . ' to ' . $request->get('end_date'));
 
                 $mailer->send($email);
 
