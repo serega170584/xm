@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Company;
-use App\Entity\CompanyHistory;
 use App\Repository\CompanyRepository;
 use App\Service\CompanyHistoryApiImporter;
-use App\Service\CompanyHistoryApiProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Monolog\DateTimeImmutable;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -22,7 +19,6 @@ use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
     name: 'app:api:history:import',

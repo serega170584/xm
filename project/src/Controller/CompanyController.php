@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\CompanyHistory;
 use App\Repository\CompanyHistoryRepository;
 use App\Repository\CompanyRepository;
 use App\Service\CompanyFieldsValidator;
@@ -58,9 +57,8 @@ class CompanyController extends AbstractController
     }
 
     #[Route('/history', name: 'app_history')]
-    public function history(Request $request, CompanyHistoryRepository $repository): Response
+    public function history(Request $request, CompanyHistoryRepository $repository, CompanyHistoryReport $companyHistoryReport): Response
     {
-        $companyHistoryReport = new CompanyHistoryReport();
         $companyHistoryReport->generate($request, $repository);
         return $this->render('company/history.html.twig', [
             'history' => $companyHistoryReport->getHistory(),
